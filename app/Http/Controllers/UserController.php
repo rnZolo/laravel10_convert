@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -37,7 +39,8 @@ class UserController extends Controller
         $request->session()->invalidate();
      
         $request->session()->regenerateToken();
-     
+        //meron
         return redirect('/login');
     }
+
 }

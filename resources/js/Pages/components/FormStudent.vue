@@ -1,5 +1,4 @@
 <script setup >
-import NProgress from 'nprogress'
 import { router, useForm } from '@inertiajs/vue3';
 
     const data = defineProps(['method', 'student']);
@@ -122,8 +121,6 @@ import { router, useForm } from '@inertiajs/vue3';
         })   
     }
 
-    router.on('start', () => NProgress.start());
-    router.on('finish', () => NProgress.done())
     console.log(data)
 </script>
 

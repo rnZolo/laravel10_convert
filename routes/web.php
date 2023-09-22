@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +15,11 @@ use App\Http\Controllers\UserController;
 |
 */
 
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/',[AdminController::class, 'index']);
+    Route::get('/create',[AdminController::class, 'create']);
+    Route::get('/store',[AdminController::class, 'store']);
+});
 // Route::get('/', [EventsController::class, 'show']);
 Route::middleware(['auth'])->group(function () {
         Route::get('/', [StudentController::class, 'index']);
@@ -30,4 +36,6 @@ Route::middleware(['guest'])->group(function () {
     Route::get('/login', [UserController::class, 'index'])->name('login');
     Route::post('/login_auth', [UserController::class, 'login']);
 });
+
+
 
