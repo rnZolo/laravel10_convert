@@ -7,7 +7,7 @@
 </script>
 <template>
       <title>Student | List</title>
-    <Layout >
+    <Layout>
             <Table :student_list="student_list" :filter="filter"/>
     </Layout>
 </template>

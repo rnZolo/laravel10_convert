@@ -1,8 +1,7 @@
 <script setup >
-// import $ from 'jquery';
-import { router } from '@inertiajs/vue3';
-import { useForm } from '@inertiajs/vue3'
-    
+import NProgress from 'nprogress'
+import { router, useForm } from '@inertiajs/vue3';
+
     const data = defineProps(['method', 'student']);
     let method = data.method;
     let form;
@@ -97,9 +96,9 @@ import { useForm } from '@inertiajs/vue3'
                             status // 'success'
                             )
                             toastify('Student Enrolled', 'success')
+                            router.get('/create');
                         }
                         if(method == 'put'){
-                            // router.get('/');
                             Swal.fire(
                             btntext, // 'Deleted!',
                             confirmText2, //  'Your file has been deleted.',
@@ -122,6 +121,10 @@ import { useForm } from '@inertiajs/vue3'
 
         })   
     }
+
+    router.on('start', () => NProgress.start());
+    router.on('finish', () => NProgress.done())
+    console.log(data)
 </script>
 
 <style scoped>

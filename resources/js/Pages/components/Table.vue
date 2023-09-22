@@ -1,7 +1,18 @@
 <script setup>
-    import { Link, router } from '@inertiajs/vue3'
+    import { Link, router } from '@inertiajs/vue3';
+    import { reactive } from 'vue';
     const filter = defineProps(['student_list', 'filter']);
-
+    const stud = reactive({
+        id: null,
+        name: null,
+        student_type: null,
+        mobile_number: null,
+        age: null,
+        gender: null,
+        email: null,
+        address: null,
+        grades: null,
+    })
     function onChange(event){
         // console.log(event.target.value);
         router.get('/',{
@@ -19,7 +30,6 @@
             onError: () => {
                 swal('Unable to Update', 'Something happen', 'error');
             },
-            preserveScroll: true
         });
     }
     function destroy(id){
@@ -159,7 +169,7 @@
         let tr = document.querySelectorAll('tbody tr');
             tr.forEach((trID_Number)=>{
             let id_num = trID_Number.childNodes[2].innerText;
-            console.log(trID_Number.childNodes[2].innerText);
+            // console.log(trID_Number.childNodes[2].innerText);
             let name = trID_Number.childNodes[1].childNodes[0].childNodes[1].innerText;
             let toLook = new RegExp(event.target.value, "i");
             if((!toLook.test(id_num)) & (!toLook.test(name))){
@@ -170,15 +180,58 @@
         });
 
     }
+    function getRowInfo(event){
+        let tr = event.target.closest('tr');
+        stud.id = tr.childNodes[2].innerText;
+        stud.age = tr.childNodes[3].innerText;
+        stud.gender = tr.childNodes[4].innerText == '' ? 'unknown' : tr.childNodes[4].innerText;
+        stud.address = tr.childNodes[6].innerText;
+        stud.name = tr.querySelector('.row-name').innerText;
+        stud.student_type = tr.querySelector('.row-student_type').innerText;
+        stud.mobile_number = tr.querySelector('.row-mobile_number').innerText;
+        stud.email = tr.querySelector('.row-email').innerText;
+        stud.grades = tr.querySelector('.row-grades').innerText == '' ? 'grades not issued' : tr.querySelector('.row-grades').innerText;
+        let nd = tr.childNodes;
+        console.log(tr.querySelector('.row-name').innerText);
+
+    }
 </script>
 <template>
+    <!-- modal -->
+    <dialog id="my_modal_1" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg py-2">ID Number</h3>
+        <p v-text="stud.id"></p>
+        <h3 class="font-bold text-lg py-2">Name</h3>
+        <p class="py-2" v-text="stud.name"></p>
+        <h3 class="font-bold text-lg py-2">Age</h3>
+        <p class="py-2" v-text="stud.age"></p>
+        <h3 class="font-bold text-lg py-2">Gender</h3>
+        <p class="py-2" v-text="stud.gender"></p>
+        <h3 class="font-bold text-lg py-2">Mobile Contact</h3>
+        <p class="py-2" v-text="stud.mobile_number"></p>
+        <h3 class="font-bold text-lg py-2">Email</h3>
+        <p class="py-2" v-text="stud.email"></p>
+        <h3 class="font-bold text-lg py-2">Address</h3>
+        <p class="py-2" v-text="stud.address"></p>
+        <h3 class="font-bold text-lg py-2">Grade</h3>
+        <p class="py-2" v-text="stud.grades"></p>
+        <div class="modal-action">
+        <form method="dialog">
+            <!-- if there is a button in form, it will close the modal -->
+            <button class="btn">Close</button>
+        </form>
+        </div>
+    </div>
+    </dialog>
+    <!-- table -->
     <div class="overflow-x-auto mx-[5%] z-10s">
         <div class="flex w-full items-center">
             <Link href="/create" as="button" type="button" class="btn bg-green-800 hover:bg-green-600 text-white mr-5">Enroll Student</Link>
             <div class="flex gap-3 justify-start mr-auto items-center">
                 <input type="text" placeholder="ID Number | Name" class="search-inp input input-bordered w-full max-w[300px]" @input="search($event)" />
             </div> 
-        <button type="button" class="btn btn-sm mx-5 bg-blue-900 hover:bg-blue-500 text-white ml-auto" @click="refreshPage()">Refresh</button>
+        <button type="button" class="btn btn-sm mx-5 bg-amber-400 hover:bg-amber-200  ml-auto" @click="refreshPage()">Refresh</button>
         <select :value="filter.filter" class="select select-bordered w-full max-w-[200px] filter-st" @change="onChange($event)">
             <option selected disabled>Select Type</option>
             <option value="all">All</option>
@@ -191,10 +244,9 @@
         <tr>
             <th>
             <label>
-                <!-- <input type="checkbox" class="checkbox" /> -->
                 <div class="dropdown dropdown-right">
-                    <label tabindex="0" class="btn btn-sm m-1 bg-amber-400 hover:bg-amber-600 ">Selected</label>
-                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 flex flex-col gap-3">
+                    <label tabindex="0" class="btn btn-sm m-1 bg-amber-400 hover:bg-amber-200 ">Selected</label>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 flex flex-col gap-3 text-center">
                         <li @click="allCheckedIs(true)" class="rounded-box bg-green-900 text-white hover:bg-green-500 p-2">Select All</li>
                         <li @click="allCheckedIs(false)" class="rounded-box bg-blue-900 text-white hover:bg-blue-500 p-2">UnSelect</li>
                         <li @click="mulDestroy()" class="rounded-box bg-red-900 text-white hover:bg-red-500 p-2">Delete Selected</li>
@@ -205,11 +257,11 @@
             <th>Name</th>
             <th>ID number</th>
             <th>Age</th>
-            <th>Gender</th>
-            <th>Contacts</th>
+            <th class="hidden">Gender</th>
+            <th class="hidden">Contacts</th>
             <th>Address</th>
             <th>Grades</th>
-            <th>Action</th>
+            <th class="text-center">Action</th>
         </tr>
         </thead>
         <tbody >
@@ -220,28 +272,24 @@
                     <input type="checkbox" class="checkbox cb " :id="student.id"/>
                 </label>
             </th>
-            <td>
+            <td  class="btn" onclick="my_modal_1.showModal()" @click="getRowInfo($event)">
             <div class="flex items-center space-x-3 relative">
-                    <span class="badge badge-ghost badge-sm absolute -top-5">{{ student.student_type }}</span>
-                    <div class="font-bold">{{ student.name }}</div>
+                    <span class="badge badge-ghost badge-sm absolute -top-5  row-student_type">{{ student.student_type }}</span>
+                    <div class="font-bold row-name" >{{ student.name }}</div>
             </div>
             </td>
-            <td>
-                {{ student.id_number }}
-            </td>
-            <td>
-                {{ student.age }}
-            </td>
-            <td>{{ student.gender }}</td>
-            <td>
-                {{ student.mobile_number }}
+            <td class=" row-id_number">{{ student.id_number }}</td>
+            <td class=" row-age">{{ student.age }}</td>
+            <td class="hidden row-gender">{{ student.gender }}</td>
+            <td class="hidden">
+                <span class="row-mobile_number">{{ student.mobile_number }}</span>
                 <br>
-                <span class="badge badge-ghost badge-sm">{{ student.email }}</span>
+                <span class="badge badge-ghost badge-sm row-email">{{ student.email }}</span>
             </td>
             <td>
                 <div class="text-sm opacity-50">{{ student.city }}</div>
             </td>
-            <td>{{ student.grades }}</td>
+            <td class=" row-grades">{{ student.grades }}</td>
             <th class="flex gap-3 justify-center">
             <button class="btn bg-blue-800 hover:bg-blue-700 text-white" @click="edit(student.id)">Edit</button>
             <button   class="btn bg-red-800 hover:bg-blue-700 text-white " @click="destroy(student.id)">Delete</button>

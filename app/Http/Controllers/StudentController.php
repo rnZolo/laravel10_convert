@@ -15,28 +15,25 @@ class StudentController extends Controller{
         if($request->all() == null){
             $filter = 'all';
         }else{
-            //  dd($request->data['student_filter']);
             $request->data['student_filter'] == 'Select Type' ? 
-            $filter = 'all':
-            $filter = $request->data['student_filter'];
+                $filter = 'all':
+                $filter = $request->data['student_filter'];
         }
         
-            if($filter == 'all' ){
-                $student_list = Student::latest()->get()->toArray();
-            }
-            else{
-                $student_list = Student::where('student_type', $filter)->
-                latest()->get()->toArray();
-            }
+        if($filter == 'all' ){
+            $student_list = Student::latest()->get()->toArray();
+        }
+        else{
+            $student_list = Student::where('student_type', $filter)->
+                                            latest()->get()->toArray();
+        }
     
             return Inertia::render('index', [
-                'student_list'=> $student_list, 'filter' => $filter]);
+                    'student_list'=> $student_list, 'filter' => $filter]);
     }
 
     public function create(){
-        sleep(1);
         $nextId = Student::select('id_number')->orderBy('id_number', 'desc')->limit(1)->get()->toArray();
-        // dd($nextId);
         return Inertia::render('create',['method' => 'post', 'student' => $nextId
         ], 200);
     }
@@ -48,7 +45,7 @@ class StudentController extends Controller{
     }
 
     public function edit($id){
-        sleep(1);
+    
         // fetch user data
         return Inertia::render('Edit',['method' => 'put', 
                                 'student' => Student::findOrFail(request()->id)->toArray()], 200);
