@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    body { 
+        @apply w-full h-full;
+    }
+    #app{
+        @apply w-full h-full;
+    }
+    label{
+        @apply relative flex justify-start gap-5;
+
+    }
+    th{
+        @apply text-center;
+    }
+}
